@@ -19,42 +19,48 @@ const combinations = [
 function victory(combinations, playerCircle, playerX) {
 
     var winner = 'empate';
-    var bool = false;
+    var win = {
+        "winner": "empty",
+        "haveWinner": false
+    };
     var i = 0;
 
-    while (i < combinations.length) {
+    while (i < combinations.length) { //Compara se o tamanho de cada comparação é igual a 3, se for ele retorna um vencedor.
 
         var equalCircle = coletaIguais(combinations[i], playerCircle);
         var equalX = coletaIguais(combinations[i], playerX);
 
         if (equalCircle.length == 3) {
             winner = "Circle";
-            bool = true;
+            win.winner = winner;
+            win.haveWinner = true;
             break;
         } else if (equalX.length == 3) {
             winner = "X"
-            bool = false;
+            win.winner = winner;
+            win.haveWinner = true;
             break;
 
-        } else {
-            winner = "empate";
         }
 
         i++;
     }
 
-    if(winner != "empate"){
-        alert(`${winner} Venceu.`);
-        return bool;
-    } else {
-        return bool;
+    return win;
+}
+
+function showWinner() { // mostra um vencedor na tela
+
+    aux = victory(combinations, playerCircle, playerX);
+
+    if (aux.haveWinner) {
+        alert(`${aux.winner} Venceu!`);
     }
-    
 }
 
 
-
-function coletaIguais(arr1, arr2) {
+function coletaIguais(arr1, arr2) { // compara se os arrays individuais dos players possuem as 
+                                    // posições ocupadas iguais a cada combinação de vitoria possível
     var arrAux = [];
 
     for (var i = 0; i < arr1.length; i++) {
@@ -68,42 +74,37 @@ function coletaIguais(arr1, arr2) {
     return arrAux;
 }
 
-const areaMove = document.querySelectorAll('.block');
+const areaMove = document.querySelectorAll('.block'); 
 
 function addClass(container) {
     container.classList.add('active');
 }
 
-function clearBoard(board){
-    board.forEach( (element )=>{
-        element.removeChild(element.firstChild);
-    })
-}
 
-function addMove(el) {
+function addMove(el) { //Adiciona a função de click a cada quadro do jogo
     el.forEach((element, index) => {
 
         element.addEventListener('click', () => {
             addClass(element);
             game(match, index, keys, jogadas, playerCircle, playerX);
-            
-            if(element.childElementCount < 1){
+
+            if (element.childElementCount < 1) {
                 createTextMove(element, keys, match);
             }
-            
-            victory(combinations, playerCircle, playerX);
 
-            if(victory(combinations, playerCircle, playerX)){
+            if (victory(combinations, playerCircle, playerX).haveWinner) {
                 document.location.reload(1);
             }
+
+            showWinner();
         })
     });
 }
 
 addMove(areaMove);
 
-function game(arr, index, key, jogadas, playerCircle, playerX) {
-
+function game(arr, index, key, jogadas, playerCircle, playerX) { // Adiciona todos os movimentos em um array global, 
+                                                                 // Adiciona os lugares ocupados por x e circle em arrays separados.
     if (arr.length % 2 == 0) {
         arr.push(key[0]);
         playerCircle.push(index);
@@ -119,8 +120,7 @@ function game(arr, index, key, jogadas, playerCircle, playerX) {
 
 }
 
-
-function createTextMove(element, keys, arr) {
+function createTextMove(element, keys, arr) { //adiciona os movimentos no quadro
     var p = document.createElement('p');
 
     if (arr.length % 2 == 0) {
@@ -132,4 +132,3 @@ function createTextMove(element, keys, arr) {
     p.appendChild(txtP);
     element.appendChild(p)
 }
-
